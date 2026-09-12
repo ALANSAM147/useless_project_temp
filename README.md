@@ -2,7 +2,7 @@
 
 
 
-# [Project Name] 🎯
+# REFRIGERATOR 🎯
 
 
 ## Basic Details
