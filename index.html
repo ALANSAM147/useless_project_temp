@@ -1,1 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FRIDGE?™</title>
+<style>
+  :root{
+    --ice-100:#f4fbff;
+    --ice-200:#dcf0fb;
+    --blue-500:#1b4d6b;
+    --blue-900:#071826;
+    --blue-950:#04101c;
+    --apple:#d6402f;
+    --apple-dark:#a52b1d;
+    --glass:rgba(255,255,255,0.06);
+    --glass-strong:rgba(255,255,255,0.1);
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;
+    height:100%;
+    background:radial-gradient(circle at 50% 0%, var(--blue-500) 0%, var(--blue-900) 55%, var(--blue-950) 100%);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Helvetica, Arial, sans-serif;
+    color:var(--ice-100);
+    overflow:hidden;
+  }
+  #app{
+    position:relative;
+    width:100%;
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  /* ---------- INTRO ---------- */
+  #intro{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    background:var(--blue-950);
+    z-index:50;
+    transition:opacity .5s ease, transform .5s ease;
+  }
+  #intro.hide{
+    opacity:0;
+    transform:scale(1.03);
+    pointer-events:none;
+  }
+  .intro-msg{
+    position:absolute;
+    top:58%;
+    font-size:13px;
+    letter-spacing:.08em;
+    color:#7fb4d9;
+    opacity:0;
+    animation:msgFade 1.1s ease forwards;
+  }
+  @keyframes msgFade{
+    0%{opacity:0; transform:translateY(4px);}
+    15%{opacity:1; transform:translateY(0);}
+    85%{opacity:1;}
+    100%{opacity:0;}
+  }
+  .intro-apple{
+    font-size:120px;
+    filter:drop-shadow(0 20px 40px rgba(0,0,0,.5));
+    animation:appleIntro 3.4s ease forwards;
+    transform-origin:center;
+  }
+  @keyframes appleIntro{
+    0%{ transform:scale(0) rotate(0deg); opacity:0; }
+    18%{ transform:scale(1) rotate(0deg); opacity:1; }
+    60%{ transform:scale(1) rotate(720deg); opacity:1; }
+    72%{ transform:scale(1.05) rotate(760deg); }
+    76%{ transform:translateX(20px) scale(1.15) rotate(780deg); }
+    80%{ transform:translateX(340px) scale(0.7) rotate(900deg) ; opacity:1;}
+    84%{ transform:translateX(340px) scale(0.7) rotate(900deg); opacity:0; }
+    100%{ opacity:0; }
+  }
+  .intro-fridge{
+    position:absolute;
+    font-size:70px;
+    right:14%;
+    opacity:0;
+    animation:fridgeIntro 3.4s ease forwards;
+  }
+  @keyframes fridgeIntro{
+    0%,55%{opacity:0; transform:scale(.6);}
+    62%{opacity:1; transform:scale(1);}
+    78%{transform:scale(1) rotate(-4deg);}
+    80%{transform:scale(1.15) rotate(4deg);}
+    82%{transform:scale(0.95) rotate(-2deg);}
+    100%{opacity:1; transform:scale(1);}
+  }
+  .intro-title{
+    position:absolute;
+    top:32%;
+    font-size:15px;
+    font-weight:600;
+    letter-spacing:.35em;
+    color:#9fd3f2;
+    opacity:0;
+    animation:titleIntro 3.4s ease forwards;
+  }
+  @keyframes titleIntro{
+    0%,20%{opacity:0;}
+    30%{opacity:1;}
+    100%{opacity:1;}
+  }
+  .bonk-flash{
+    position:absolute;
+    inset:0;
+    background:#fff;
+    opacity:0;
+    pointer-events:none;
+    animation:bonkFlash 3.4s ease forwards;
+  }
+  @keyframes bonkFlash{
+    0%,79%{opacity:0;}
+    80%{opacity:.85;}
+    83%{opacity:0;}
+  }
+  .bonk-text{
+    position:absolute;
+    font-size:44px;
+    font-weight:800;
+    letter-spacing:.05em;
+    color:#ffdede;
+    opacity:0;
+    animation:bonkText 3.4s ease forwards;
+  }
+  @keyframes bonkText{
+    0%,78%{opacity:0; transform:scale(.5);}
+    81%{opacity:1; transform:scale(1.3) rotate(-6deg);}
+    88%{opacity:1; transform:scale(1) rotate(0deg);}
+    100%{opacity:0;}
+  }
+  .shake{ animation:shakeScreen .4s ease; }
+  @keyframes shakeScreen{
+    0%,100%{transform:translate(0,0);}
+    20%{transform:translate(-6px,3px);}
+    40%{transform:translate(6px,-3px);}
+    60%{transform:translate(-4px,2px);}
+    80%{transform:translate(4px,-2px);}
+  }
+
+  /* ---------- MAIN CARD ---------- */
+  #main{
+    width:min(420px, 90vw);
+    background:linear-gradient(160deg, var(--glass-strong), var(--glass));
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:28px;
+    padding:36px 32px 30px;
+    backdrop-filter:blur(18px);
+    box-shadow:0 30px 80px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.08);
+    opacity:0;
+    transform:translateY(16px);
+    transition:opacity .6s ease, transform .6s ease;
+    position:relative;
+  }
+  #main.show{opacity:1; transform:translateY(0);}
+
+  .brand{
+    text-align:center;
+    font-size:13px;
+    letter-spacing:.4em;
+    color:#8fc4e6;
+    margin-bottom:6px;
+    font-weight:600;
+  }
+  .tagline{
+    text-align:center;
+    font-size:12px;
+    color:#6fa3c4;
+    margin-top:2px;
+  }
+  .question{
+    text-align:center;
+    font-size:26px;
+    font-weight:700;
+    line-height:1.25;
+    margin:14px 0 26px;
+    color:#f4fbff;
+    letter-spacing:-.01em;
+  }
+  .icon-row{
+    display:flex;
+    justify-content:center;
+    margin-bottom:22px;
+  }
+  .fridge-icon{
+    font-size:58px;
+    filter:drop-shadow(0 10px 18px rgba(0,0,0,.4));
+    transition:transform .25s ease;
+  }
+  .fridge-icon.bump{ animation:bump .5s ease; }
+  @keyframes bump{
+    0%{transform:scale(1);}
+    30%{transform:scale(.9) rotate(-3deg);}
+    60%{transform:scale(1.06) rotate(2deg);}
+    100%{transform:scale(1);}
+  }
+
+  /* ---------- INTERACTIVE FRIDGE OPEN SCENE ---------- */
+  .fridge-scene{
+    position:relative;
+    width:150px;
+    height:150px;
+    margin:0 auto 6px;
+    perspective:700px;
+    transition:transform .25s ease;
+  }
+  .fridge-scene.bump{ animation:bump .5s ease; }
+  .fridge-shell{
+    position:absolute;
+    inset:0;
+    border-radius:18px;
+    background:linear-gradient(160deg,#eaf7ff,#b9d9ec);
+    box-shadow:inset 0 0 0 3px rgba(255,255,255,.5), 0 16px 30px rgba(0,0,0,.4);
+    z-index:1;
+  }
+  .fridge-interior{
+    position:absolute;
+    inset:7px;
+    border-radius:12px;
+    background:linear-gradient(180deg,#0c2233,#081722);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    text-align:center;
+    padding:10px;
+    z-index:0;
+  }
+  .shelf-items{
+    font-size:20px;
+    letter-spacing:8px;
+    opacity:0;
+    transition:opacity .3s ease .1s;
+  }
+  .interior-text{
+    font-size:10.5px;
+    color:#8fe3ff;
+    font-style:italic;
+    opacity:0;
+    transition:opacity .3s ease .15s;
+  }
+  .fridge-interior.reveal .shelf-items,
+  .fridge-interior.reveal .interior-text{
+    opacity:1;
+  }
+  .fridge-door{
+    position:absolute;
+    inset:0;
+    border-radius:18px;
+    background:linear-gradient(160deg,#ffffff,#d9edf8);
+    transform-origin:left center;
+    transform-style:preserve-3d;
+    box-shadow:inset 0 0 0 3px rgba(255,255,255,.6), 4px 0 14px rgba(0,0,0,.25);
+    cursor:grab;
+    touch-action:none;
+    z-index:2;
+    transform:rotateY(0deg);
+  }
+  .fridge-door.snap{
+    transition:transform .5s cubic-bezier(.34,1.56,.64,1);
+  }
+  .fridge-door.dragging{
+    cursor:grabbing;
+  }
+  .fridge-handle{
+    position:absolute;
+    right:12px;
+    top:50%;
+    transform:translateY(-50%);
+    width:9px;
+    height:48px;
+    border-radius:6px;
+    background:linear-gradient(180deg,#9fd3f2,#3f6e8c);
+    box-shadow:0 2px 6px rgba(0,0,0,.35);
+  }
+  .fridge-hint{
+    text-align:center;
+    font-size:10.5px;
+    color:#5f8ba6;
+    margin-bottom:20px;
+  }
+
+  #ask-btn{
+    display:block;
+    width:100%;
+    padding:16px;
+    border:none;
+    border-radius:16px;
+    background:linear-gradient(135deg,#3fa9dd,#1c6fa3);
+    color:white;
+    font-size:16px;
+    font-weight:700;
+    letter-spacing:.02em;
+    cursor:pointer;
+    box-shadow:0 12px 24px rgba(31,120,170,.35);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  #ask-btn:hover{transform:translateY(-2px); box-shadow:0 16px 30px rgba(31,120,170,.45);}
+  #ask-btn:active{transform:translateY(0px) scale(.98);}
+  #ask-btn:disabled{opacity:.6; cursor:default; transform:none;}
+
+  #scan-btn{
+    display:block;
+    width:100%;
+    padding:13px;
+    margin-top:10px;
+    border-radius:14px;
+    border:1px dashed rgba(255,255,255,.25);
+    background:rgba(255,255,255,.03);
+    color:#bfe2f5;
+    font-size:13.5px;
+    font-weight:600;
+    cursor:pointer;
+    transition:background .15s ease, transform .15s ease;
+  }
+  #scan-btn:hover{background:rgba(255,255,255,.08); transform:translateY(-1px);}
+
+  #scan-result{
+    display:none;
+    margin-top:16px;
+    text-align:center;
+  }
+  #scan-result.active{display:block; animation:stepIn .35s ease;}
+  #scan-img{
+    width:100%;
+    max-height:160px;
+    object-fit:cover;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.15);
+    box-shadow:0 12px 24px rgba(0,0,0,.4);
+  }
+  .scan-tag{
+    display:inline-block;
+    font-size:11.5px;
+    color:#8fc4e6;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:20px;
+    padding:4px 10px;
+    margin:10px 4px 0;
+  }
+  .scan-verdict{
+    font-size:12.5px;
+    color:#6fa3c4;
+    margin-top:10px;
+    font-style:italic;
+  }
+
+  .mood-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    margin-top:22px;
+    font-size:16px;
+    font-weight:600;
+    color:#cfe8f7;
+  }
+  .mood-emoji{font-size:28px;}
+
+  .personality-line{
+    text-align:center;
+    font-size:15px;
+    color:#9fd3f2;
+    margin-top:8px;
+    min-height:20px;
+    font-style:italic;
+    font-weight:500;
+  }
+
+  /* ---------- LOADING ---------- */
+  #loading{
+    display:none;
+    margin-top:6px;
+  }
+  #loading.active{display:block;}
+  .load-title{
+    text-align:center;
+    font-size:12px;
+    letter-spacing:.2em;
+    color:#8fc4e6;
+    margin-bottom:14px;
+    font-weight:600;
+  }
+  .load-step{
+    font-size:13.5px;
+    color:#5a86a3;
+    padding:5px 0;
+    opacity:0;
+    transform:translateX(-6px);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .load-step.show{
+    animation:stepIn .35s ease forwards;
+  }
+  .load-step .check{
+    color:#3fa9dd;
+    opacity:0;
+  }
+  .load-step.done .check{opacity:1;}
+  .load-step.done{color:#dbeffb;}
+  @keyframes stepIn{
+    to{opacity:1; transform:translateX(0);}
+  }
+
+  /* ---------- RESULT ---------- */
+  #result{
+    display:none;
+    text-align:center;
+  }
+  #result.active{display:block;}
+  .result-emoji{font-size:52px; margin-bottom:10px;}
+  .result-verdict{
+    font-size:30px;
+    font-weight:800;
+    letter-spacing:.02em;
+    margin-bottom:8px;
+    line-height:1.15;
+  }
+  .result-sub{
+    font-size:16px;
+    color:#b9dcf0;
+    margin-bottom:24px;
+  }
+  .result-actions{
+    display:flex;
+    gap:10px;
+  }
+  .btn-secondary{
+    flex:1;
+    padding:13px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.18);
+    background:rgba(255,255,255,.05);
+    color:#eaf6ff;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    transition:background .15s ease, transform .15s ease;
+  }
+  .btn-secondary:hover{background:rgba(255,255,255,.1); transform:translateY(-1px);}
+
+  /* ---------- STATS ---------- */
+  #stats-toggle{
+    text-align:center;
+    margin-top:18px;
+    font-size:11.5px;
+    color:#5f8ba6;
+    cursor:pointer;
+    letter-spacing:.05em;
+  }
+  #stats-toggle:hover{color:#8fc4e6;}
+  #stats{
+    display:none;
+    margin-top:14px;
+    padding-top:16px;
+    border-top:1px solid rgba(255,255,255,.1);
+  }
+  #stats.active{display:block;}
+  .stat-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:12.5px;
+    color:#a9cfe6;
+    margin-bottom:9px;
+  }
+  .stat-bar-track{
+    flex:1;
+    height:5px;
+    background:rgba(255,255,255,.08);
+    border-radius:4px;
+    margin:0 10px;
+    overflow:hidden;
+  }
+  .stat-bar-fill{
+    height:100%;
+    background:linear-gradient(90deg,#3fa9dd,#8fe3ff);
+    border-radius:4px;
+    transition:width .6s ease;
+  }
+  .stat-val{width:34px; text-align:right; color:#dbeffb; font-weight:600;}
+
+  /* ---------- APPLE INSIDE FRIDGE ---------- */
+  .fridge-apple{
+    cursor:pointer;
+    user-select:none;
+    display:inline-block;
+    transition:transform .15s ease;
+  }
+  .fridge-apple:hover{ transform:scale(1.15) rotate(-6deg); }
+  .fridge-apple.bonk{
+    animation:appleBonk .5s ease forwards;
+  }
+  @keyframes appleBonk{
+    0%{transform:scale(1) rotate(0deg); opacity:1;}
+    40%{transform:scale(1.3) rotate(-15deg); opacity:1;}
+    100%{transform:scale(.2) rotate(360deg) translateY(-30px); opacity:0;}
+  }
+
+
+  /* ---------- REPORT ---------- */
+  #report-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(2,10,18,.75);
+    backdrop-filter:blur(6px);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:60;
+  }
+  #report-overlay.active{display:flex;}
+  #report-card{
+    width:min(400px,88vw);
+    background:linear-gradient(160deg, var(--glass-strong), var(--glass));
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:24px;
+    padding:30px 28px;
+    text-align:center;
+    box-shadow:0 30px 80px rgba(0,0,0,.6);
+  }
+  #report-card h2{
+    font-size:12px;
+    letter-spacing:.25em;
+    color:#8fc4e6;
+    margin:0 0 18px;
+    font-weight:700;
+  }
+  .report-line{
+    display:flex;
+    justify-content:space-between;
+    font-size:13.5px;
+    color:#dbeffb;
+    padding:6px 0;
+    border-bottom:1px dashed rgba(255,255,255,.08);
+  }
+  .report-line span:last-child{font-weight:700; color:#8fe3ff;}
+  .congrats{
+    margin-top:20px;
+    font-size:15px;
+    font-weight:800;
+    letter-spacing:.03em;
+  }
+  .congrats-sub{
+    font-size:13px;
+    color:#a9cfe6;
+    margin-top:4px;
+    margin-bottom:22px;
+  }
+  #restart-btn{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(135deg,var(--apple),var(--apple-dark));
+    color:white;
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+  }
+
+  .footer-tag{
+    position:absolute;
+    bottom:18px;
+    left:0; right:0;
+    text-align:center;
+    font-size:11px;
+    color:#3d6280;
+    letter-spacing:.03em;
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- INTRO -->
+  <div id="intro">
+    <div class="bonk-flash"></div>
+    <div class="intro-title">FRIDGE?™</div>
+    <div class="intro-apple">🍎</div>
+    <div class="intro-fridge">🧊</div>
+    <div class="bonk-text">💥 BONK</div>
+    <div class="intro-msg" style="animation-delay:.1s">Start cheyyunnu...</div>
+    <div class="intro-msg" style="animation-delay:1.2s">Apple-ne analyze cheyyunnu...</div>
+    <div class="intro-msg" style="animation-delay:2.1s">Apple status: venda kaaryam</div>
+  </div>
+
+  <!-- MAIN CARD -->
+  <div id="main">
+    <div class="brand">FRIDGE?™</div>
+    <div class="tagline">Oru serious AI, oru silly question. Mass alle?</div>
+    <div class="question">Fridge<br/>thurakkaano?</div>
+    <div class="fridge-scene" id="fridge-scene">
+      <div class="fridge-interior" id="fridge-interior">
+        <div class="shelf-items">🥚 🧀 🥤 <span class="fridge-apple" id="fridge-apple" title="Ende peril parayanda!">🍎</span></div>
+        <div class="interior-text" id="interior-text">Onnum illa machane.</div>
+      </div>
+      <div class="fridge-shell"></div>
+      <div class="fridge-door" id="fridge-door">
+        <div class="fridge-handle"></div>
+      </div>
+    </div>
+    <div class="fridge-hint" id="fridge-hint">👆 Handle vali fridge thurakku</div>
+
+    <button id="ask-btn">🔮 FRIDGE-INOD CHODIKAM</button>
+    <button id="scan-btn">📷 Fridge scan cheyyam (venda kaaryam alla)</button>
+    <input type="file" id="scan-input" accept="image/*" capture="environment" style="display:none;" />
+
+    <div id="scan-result">
+      <img id="scan-img" src="" alt="" />
+      <div class="scan-tag" id="scan-tag-1">Fridge-ness: 0%</div>
+      <div class="scan-tag" id="scan-tag-2">Cold detected: no</div>
+      <div class="scan-verdict" id="scan-verdict">Analysis complete. Means nothing.</div>
+    </div>
+
+    <div id="loading">
+      <div class="load-title">FRIDGE-INOD CHODIKKUNNU...</div>
+      <div id="load-steps"></div>
+    </div>
+
+    <div id="result">
+      <div class="result-emoji" id="result-emoji">🟢</div>
+      <div class="result-verdict" id="result-verdict">YES</div>
+      <div class="result-sub" id="result-sub">Go look.</div>
+      <div class="result-actions">
+        <button class="btn-secondary" id="again-btn">🔄 Onnu koodi chodikkam</button>
+      </div>
+    </div>
+
+    <div class="mood-row" id="mood-row">
+      <span>Fridge Mood:</span> <span class="mood-emoji" id="mood-emoji">😐</span>
+    </div>
+    <div class="personality-line" id="personality-line">Hello.</div>
+
+    <div id="stats-toggle">▾ fridge stats nokkam (vera purpose onnum illa)</div>
+    <div id="stats">
+      <div class="stat-row"><span>Vibe</span><div class="stat-bar-track"><div class="stat-bar-fill" id="bar-vibe"></div></div><span class="stat-val" id="val-vibe">0%</span></div>
+      <div class="stat-row"><span>Drama</span><div class="stat-bar-track"><div class="stat-bar-fill" id="bar-drama"></div></div><span class="stat-val" id="val-drama">0%</span></div>
+      <div class="stat-row"><span>Suspicion</span><div class="stat-bar-track"><div class="stat-bar-fill" id="bar-suspicion"></div></div><span class="stat-val" id="val-suspicion">0%</span></div>
+      <div class="stat-row"><span>Hope</span><div class="stat-bar-track"><div class="stat-bar-fill" id="bar-hope"></div></div><span class="stat-val" id="val-hope">0%</span></div>
+      <div class="stat-row"><span>Reason</span><div class="stat-bar-track"><div class="stat-bar-fill" id="bar-reason"></div></div><span class="stat-val" id="val-reason">0%</span></div>
+    </div>
+  </div>
+
+  <div class="footer-tag">Ninakku already ariyam ullath ullu.</div>
+</div>
+
+<!-- REPORT -->
+<div id="report-overlay">
+  <div id="report-card">
+    <h2>NINTE FRIDGE REPORT</h2>
+    <div class="report-line"><span>Chodyam chodichathu</span><span id="rep-questions">0</span></div>
+    <div class="report-line"><span>Decision edutha</span><span id="rep-decisions">0</span></div>
+    <div class="report-line"><span>Use undayath</span><span>0</span></div>
+    <div class="report-line"><span>Correct aayath</span><span>???</span></div>
+    <div class="report-line"><span>Fridge thurannath</span><span>0</span></div>
+    <div class="report-line"><span>Apple adicha</span><span id="rep-apples">0</span></div>
+    <div class="report-line"><span>Time waste aayath</span><span id="rep-time">0:00</span></div>
+    <div class="congrats">CONGRATULATIONS MACHA</div>
+    <div class="congrats-sub">Onnum nediyilla. Full waste machane.</div>
+    <button id="restart-btn">VEENDUM START CHEYYAM</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const startTime = Date.now();
+  let clicks = 0;
+  let applesHit = 0;
+  let lastResults = [];
+
+  const responses = [
+    {e:"🟢", v:"AANU", s:"Poyi nokku. Ithu njan parayunnathaanu."},
+    {e:"🔴", v:"ILLA MACHA", s:"Nee innu already randu vattam poyathaanu."},
+    {e:"🟡", v:"ARIYILLA", s:"Enikkariyilla, njan oru fridge aanu."},
+    {e:"😐", v:"LIGHT-A EDUKKU", s:"2 minute munpu check cheytha alle."},
+    {e:"🚨", v:"BIG SCENE UNDU", s:"Enthelum nadakkunnund, allenkilum illa."},
+    {e:"🧊", v:"FRIDGE SPEAKS", s:"Onnum parayanilla. Athaanu answer."},
+    {e:"✅", v:"AANU MACHA", s:"Reason onnum venda. Poyi thurannu nokku."},
+    {e:"🔴", v:"VENDA", s:"Trust me bro, njan parayunnu."},
+    {e:"🟢", v:"AANU", s:"Just like that. Vere onnum aalochikkanda."},
+    {e:"😎", v:"THAN MASS", s:"Fridge thurakkumbo oru high undu."},
+    {e:"🥲", v:"POLEE", s:"Ithu correct-um allengil wrong-um."}
+  ];
+
+  const loadSteps = [
+    "Fridge vibe check cheyyunnu",
+    "Onnum illa, ath alle measure cheyyunne",
+    "Freezer-nod oru vaakku parayunnu",
+    "Apple-nod chodichu (avan mindiyilla)",
+    "Munpathe result ellam forget cheyyunnu",
+    "Enthelum oru kaaryam undakkunnu"
+  ];
+
+  const moods = ["😐","😒","😴","🤨","😭","😎","🫥"];
+
+  function personalityLine(n){
+    if(n<=1) return "Hello machane.";
+    if(n===2) return "Ninak thirich vannu alle.";
+    if(n===3) return "Onnum maariyittilla.";
+    if(n===4) return "Enthina ee chodyam vendi vendi chodikkunne?";
+    if(n===5) return "Please... nirthedaa.";
+    return "NJAN ORU FRIDGE AANU MACHA!! Vittekku!";
+  }
+
+  // ---- draggable fridge door ----
+  const fridgeDoor = document.getElementById('fridge-door');
+  const fridgeInterior = document.getElementById('fridge-interior');
+  const fridgeHint = document.getElementById('fridge-hint');
+  let dragging = false;
+  let startX = 0;
+  let currentAngle = 0;
+  let startAngle = 0;
+  let doorOpenedOnce = false;
+
+  function setDoorAngle(angle){
+    currentAngle = angle;
+    fridgeDoor.style.transform = 'rotateY(' + angle + 'deg)';
+    fridgeInterior.classList.toggle('reveal', angle <= -18);
+  }
+
+  function onPointerDown(e){
+    dragging = true;
+    startX = e.clientX;
+    startAngle = currentAngle;
+    fridgeDoor.classList.remove('snap');
+    fridgeDoor.classList.add('dragging');
+    fridgeDoor.setPointerCapture && fridgeDoor.setPointerCapture(e.pointerId);
+  }
+  function onPointerMove(e){
+    if(!dragging) return;
+    const dx = e.clientX - startX;
+    let angle = startAngle + dx * 0.6;
+    angle = Math.max(-100, Math.min(0, angle));
+    setDoorAngle(angle);
+  }
+  function onPointerUp(){
+    if(!dragging) return;
+    dragging = false;
+    fridgeDoor.classList.remove('dragging');
+    fridgeDoor.classList.add('snap');
+    if(currentAngle < -22){
+      if(!doorOpenedOnce){
+        doorOpenedOnce = true;
+        fridgeHint.textContent = "Pinne kandille? Athu thanne.";
+      }
+      setDoorAngle(-92);
+      setTimeout(()=> setDoorAngle(0), 1400);
+    } else {
+      setDoorAngle(0);
+    }
+  }
+
+  fridgeDoor.addEventListener('pointerdown', onPointerDown);
+  window.addEventListener('pointermove', onPointerMove);
+  window.addEventListener('pointerup', onPointerUp);
+
+  const scanBtn = document.getElementById('scan-btn');
+  const scanInput = document.getElementById('scan-input');
+  const scanResult = document.getElementById('scan-result');
+  const scanImg = document.getElementById('scan-img');
+  const scanTag1 = document.getElementById('scan-tag-1');
+  const scanTag2 = document.getElementById('scan-tag-2');
+  const scanVerdict = document.getElementById('scan-verdict');
+
+  const scanVerdicts = [
+    "Analysis complete. Onnum manasilayilla.",
+    "Confirm: ithu oru photo aanu.",
+    "Fridge-inu ithu ishtapettilla.",
+    "Drama pora, koodathal venam.",
+    "Ithu kondu onnum maarunnilla.",
+    "Result 'venda kaaryam' folder-il file cheythu.",
+    "Apple ithu kandu, but bothich illa.",
+    "97% chance ee photo undu ennathu."
+  ];
+
+  scanBtn.addEventListener('click', ()=> scanInput.click());
+
+  scanInput.addEventListener('change', (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const url = URL.createObjectURL(file);
+    scanImg.src = url;
+    scanResult.classList.remove('active');
+    scanBtn.textContent = '🔍 Analyze cheyyunnu...';
+    scanBtn.disabled = true;
+
+    setTimeout(()=>{
+      scanTag1.textContent = 'Fridge-ness: ' + randInt(0,100) + '%';
+      scanTag2.textContent = 'Thanuppu undo: ' + (Math.random()<0.5 ? 'undu' : 'illa');
+      scanVerdict.textContent = scanVerdicts[randInt(0, scanVerdicts.length-1)];
+      scanResult.classList.add('active');
+      scanBtn.textContent = '📷 Veendum scan cheyyam (still pointless)';
+      scanBtn.disabled = false;
+    }, 900);
+  });
+
+  const askBtn = document.getElementById('ask-btn');
+  const loadingEl = document.getElementById('loading');
+  const loadStepsEl = document.getElementById('load-steps');
+  const resultEl = document.getElementById('result');
+  const resultEmoji = document.getElementById('result-emoji');
+  const resultVerdict = document.getElementById('result-verdict');
+  const resultSub = document.getElementById('result-sub');
+  const againBtn = document.getElementById('again-btn');
+  const fridgeIcon = document.getElementById('fridge-scene');
+  const moodEmoji = document.getElementById('mood-emoji');
+  const personalityLineEl = document.getElementById('personality-line');
+  const statsToggle = document.getElementById('stats-toggle');
+  const statsEl = document.getElementById('stats');
+
+  function randInt(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+
+  function updateStats(){
+    const vals = {
+      vibe: randInt(20,95),
+      drama: randInt(10,90),
+      suspicion: randInt(30,99),
+      hope: randInt(15,95),
+      reason: randInt(0,8)
+    };
+    for(const k in vals){
+      document.getElementById('bar-'+k).style.width = vals[k]+'%';
+      document.getElementById('val-'+k).textContent = vals[k]+'%';
+    }
+  }
+
+  function pickResponse(){
+    let r;
+    // bias toward contradicting the last answer for comedic effect
+    do { r = responses[randInt(0, responses.length-1)]; }
+    while(lastResults.length && r.v === lastResults[lastResults.length-1].v && Math.random() < 0.7);
+    lastResults.push(r);
+    if(lastResults.length > 5) lastResults.shift();
+    return r;
+  }
+
+  function runLoading(cb){
+    loadStepsEl.innerHTML = '';
+    askBtn.style.display = 'none';
+    resultEl.classList.remove('active');
+    loadingEl.classList.add('active');
+
+    const stepEls = loadSteps.map(text=>{
+      const div = document.createElement('div');
+      div.className = 'load-step';
+      div.innerHTML = '<span class="check">✓</span><span>'+text+'</span>';
+      loadStepsEl.appendChild(div);
+      return div;
+    });
+
+    let i = 0;
+    function nextStep(){
+      if(i >= stepEls.length){
+        setTimeout(cb, 260);
+        return;
+      }
+      stepEls[i].classList.add('show');
+      setTimeout(()=>{
+        stepEls[i].classList.add('done');
+        i++;
+        nextStep();
+      }, 260);
+    }
+    nextStep();
+  }
+
+  function showResult(){
+    loadingEl.classList.remove('active');
+    resultEl.classList.add('active');
+    const r = pickResponse();
+    resultEmoji.textContent = r.e;
+    resultVerdict.textContent = r.v;
+    resultSub.textContent = r.s;
+    fridgeIcon.classList.remove('bump');
+    void fridgeIcon.offsetWidth;
+    fridgeIcon.classList.add('bump');
+  }
+
+  const againLabels = [
+    "🔄 Onnu koodi chodikkam",
+    "🔄 Veendum oru try",
+    "🔄 Onnu koodi try adi",
+    "🔄 Still curious aano?",
+    "🔄 Bhagyam pareekshikkam",
+    "🔄 Veendum? Seriously?"
+  ];
+
+  function ask(){
+    clicks++;
+    moodEmoji.textContent = moods[randInt(0, moods.length-1)];
+    personalityLineEl.textContent = personalityLine(clicks);
+    againBtn.textContent = againLabels[Math.min(clicks-1, againLabels.length-1)];
+    updateStats();
+    runLoading(showResult);
+
+    if(clicks >= 6){
+      setTimeout(showReport, 1900);
+    }
+  }
+
+  askBtn.addEventListener('click', ask);
+  againBtn.addEventListener('click', ()=>{
+    askBtn.style.display = 'block';
+    resultEl.classList.remove('active');
+    ask();
+  });
+
+  statsToggle.addEventListener('click', ()=>{
+    statsEl.classList.toggle('active');
+    statsToggle.textContent = statsEl.classList.contains('active') ? '▴ hide fake stats' : '▾ see fridge stats (totally fake)';
+  });
+
+  // ---- report ----
+  function showReport(){
+    document.getElementById('rep-questions').textContent = clicks;
+    document.getElementById('rep-decisions').textContent = clicks;
+    document.getElementById('rep-apples').textContent = applesHit;
+    const secs = Math.floor((Date.now()-startTime)/1000);
+    const m = Math.floor(secs/60), s = secs%60;
+    document.getElementById('rep-time').textContent = m+':'+String(s).padStart(2,'0');
+    document.getElementById('report-overlay').classList.add('active');
+  }
+  document.getElementById('restart-btn').addEventListener('click', ()=>{
+    location.reload();
+  });
+
+  // ---- apple inside the fridge ----
+  const fridgeApple = document.getElementById('fridge-apple');
+  if(fridgeApple){
+    fridgeApple.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      applesHit++;
+      fridgeApple.classList.add('bonk');
+      document.getElementById('app').classList.add('shake');
+      setTimeout(()=>{
+        document.getElementById('app').classList.remove('shake');
+      }, 400);
+      setTimeout(()=>{
+        fridgeApple.classList.remove('bonk');
+        fridgeApple.style.opacity = '1';
+      }, 900);
+    });
+  }
+
+  // ---- intro sequence ----
+  window.addEventListener('load', ()=>{
+    setTimeout(()=>{
+      document.getElementById('app').classList.add('shake');
+    }, 2700);
+    setTimeout(()=>{
+      document.getElementById('intro').classList.add('hide');
+      document.getElementById('main').classList.add('show');
+    }, 3300);
+  });
+})();
+</script>
+</body>
+</html>
 
