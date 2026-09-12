@@ -6,30 +6,28 @@
 
 
 ## Basic Details
-### Team Name: [Name]
+### Team Name:TIKI-TAKA
 
 
 ### Team Members
-- Team Lead: [Name] - [College]
-- Member 2: [Name] - [College]
+- Team Lead: Alan sam - lourdes matha college of science and technology trivandrum
+- Member 2: Alwin Joseph - lourdes matha college of science and technology trivandrum 
 - Member 3: [Name] - [College]
 
 ### Project Description
-[2-3 lines about what your project does]
-
+usefull but useless
 ### The Problem (that doesn't exist)
-[What ridiculous problem are you solving?]
+
 
 ### The Solution (that nobody asked for)
 [How are you solving it? Keep it fun!]
 
 ## Technical Details
 ### Technologies/Components Used
-For Software:
-- [Languages used]
-- [Frameworks used]
-- [Libraries used]
-- [Tools used]
+For Software:+
+- English
+- HTML
+- CLOUD
 
 For Hardware:
 - [List main components]
